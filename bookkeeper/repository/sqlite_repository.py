@@ -35,6 +35,10 @@ class SQLiteRepository(AbstractRepository[T]):
 
     def get(self, pk: int) -> T | None:
         """ Получить объект по id """
+        with sqlite3.connect(self.db_file) as con:
+            cur = con.cursor()
+            cur.execute('PRAGMA foreign_keys = ON')
+            cur.execute(
         pass
 
     def get_all(self, where: dict[str, any] | None = None) -> list[T]:
@@ -51,6 +55,7 @@ class SQLiteRepository(AbstractRepository[T]):
 
     def delete(self, pk: int) -> None:
         """ Удалить запись """
+        self._container.pop(pk)
         pass
 
 
