@@ -27,11 +27,11 @@ class SQLiteRepository(AbstractRepository[T]):
 
     def get(self, pk: int) -> T | None:
         """ Получить объект по id """
-        """with sqlite3.connect(self.db_file) as con:
+        with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute('PRAGMA foreign_keys = ON')
-            cur.execute("""
-        pass
+            cur.execute(f'SELECT * FROM {self.table_name} where pk = {obj.pk}') #получить объект по id(через pk)
+            con.close()
+        return None
 
     def get_all(self, where: dict[str, any] | None = None) -> list[T]:
         """
@@ -41,19 +41,26 @@ class SQLiteRepository(AbstractRepository[T]):
         """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute(f'SELECT * FROM {self.table_name}')
+            cur.execute(f'SELECT * FROM {self.table_name} where ({names}) VALUES ({p})') #добавить если условия не заданы
             res = cur.fetchall()
         con.close()
         return res
 
     def update(self, obj: T) -> None:
         """ Обновить данные об объекте. Объект должен содержать поле pk. """
-        pass
+        with sqlite3.connect(self.db_file) as con:
+            cur = con.cursor()
+            cur.execute(f'SELECT * FROM {self.table_name} where pk = {obj.pk}')
+            con.close()
+        return None
 
     def delete(self, pk: int) -> None:
         """ Удалить запись """
-        """self._container.pop(pk)"""
-        pass
+        with sqlite3.connect(self.db_file) as con:
+            cur = con.cursor()
+            cur.execute(f'DELETE * FROM {self.table_name} where pk = {obj.pk}')
+            con.close()
+        return None
 
 """
 r = SQLiteRepository("test.sqlite", Test)
