@@ -2,8 +2,13 @@ import sqlite3
 
 from inspect import get_annotations
 from bookkeeper.repository.abstract_repository import AbstractRepository, T
+from typing import Any
+
 
 class SQLiteRepository(AbstractRepository[T]):
+    """
+    Репозиторий, работающий с базой данных SQLite"
+    """
     def __init__(self, db_file: str, cls: type) -> None:
         self.db_file = db_file
         self.table_name = cls.__name__.lower()
@@ -14,6 +19,10 @@ class SQLiteRepository(AbstractRepository[T]):
         names = ', '.join(self.fields.keys())
         p = ', '.join("?" * len(self.fields))
         values = [getattr(obj, x) for x in self.fields]
+        """
+        if getattr(obj, 'pk', None) != 0:
+        raise ValueError(f'trying to add object {obj} with filled `pk` attribute')
+        """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
             cur.execute('PRAGMA foreign_keys = ON')
@@ -29,11 +38,11 @@ class SQLiteRepository(AbstractRepository[T]):
         """ Получить объект по id """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute(f'SELECT * FROM {self.table_name} where pk = {obj.pk}') #получить объект по id(через pk)
+            cur.execute(f'SELECT * FROM {self.table_name} where pk = {pk}')
             con.close()
         return None
 
-    def get_all(self, where: dict[str, any] | None = None) -> list[T]:
+    def get_all(self, where: dict[str, Any] | None = None) -> list[T]:
         """
         Получить все записи по некоторому условию
         where - условие в виде словаря {'название_поля': значение}
@@ -41,13 +50,23 @@ class SQLiteRepository(AbstractRepository[T]):
         """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute(f'SELECT * FROM {self.table_name} where ({names}) VALUES ({p})') #добавить если условия не заданы
+            """
+            if where is None:
+                #return list[self._container.values()]
+            """
+            cur.execute(f'SELECT * FROM {self.table_name} where ({names}: {p}) VALUES ({p})')   \
+                # добавить если условия не заданы
             res = cur.fetchall()
         con.close()
         return res
 
     def update(self, obj: T) -> None:
         """ Обновить данные об объекте. Объект должен содержать поле pk. """
+        """
+        if obj.pk == 0:
+            raise ValueError('attempt to update object with unknown primary key')
+        self._container[obj.pk] = obj
+        """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
             cur.execute(f'SELECT * FROM {self.table_name} where pk = {obj.pk}')
@@ -58,12 +77,6 @@ class SQLiteRepository(AbstractRepository[T]):
         """ Удалить запись """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute(f'DELETE * FROM {self.table_name} where pk = {obj.pk}')
+            cur.execute(f'DELETE * FROM {self.table_name} where pk = {pk}')
             con.close()
         return None
-
-"""
-r = SQLiteRepository("test.sqlite", Test)
-o = Test("Hello")
-r.add(o)
-"""
