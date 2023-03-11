@@ -2,17 +2,18 @@ from bookkeeper.repository.sqlite_repository import SQLiteRepository
 
 import pytest
 
+
 @pytest.fixture
 def custom_class():
-    class Custom():
+    class Custom:
         pk: int = 0
 
     return Custom
 
 
 @pytest.fixture
-def repo():
-    return SQLiteRepository()
+def repo(custom_class):
+    return SQLiteRepository(db_file, custom_class)  # Решить проблему с файлом бд
 
 
 def test_crud(repo, custom_class):
