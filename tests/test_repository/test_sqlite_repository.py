@@ -30,9 +30,6 @@ def test_crud(repo, custom_class):
 
 
 def test_cannot_add_with_pk(db_file, custom_class):
-    """
-    Тесты на проверку pk
-    """
     obj = custom_class()
     obj.pk = 1
     with pytest.raises(ValueError):
