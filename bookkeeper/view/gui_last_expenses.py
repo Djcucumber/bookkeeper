@@ -1,7 +1,7 @@
 """
 Демонстрация TableView на основе https://www.pythonguis.com/tutorials/qtableview-modelviews-numpy-pandas/
 """
-"""
+
 from bookkeeper.models.category import Category
 from bookkeeper.models.expense import Expense
 from bookkeeper.repository.memory_repository import MemoryRepository
@@ -9,11 +9,12 @@ from bookkeeper.repository.sqlite_repository import SQLiteRepository
 from bookkeeper.utils import read_tree
 
 import sys
-
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtCore import Qt
 
-cat_repo = SQLiteRepository[Category]('DataBase.db', Category)
+cat_repo = SQLiteRepository[Category]('DataBase.db', Category)  \
+    # Почему-то не видит готовый файл базы данных, и при запуске программы создаёт новый \
+# хорошо бы с этим разобраться
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -56,4 +57,3 @@ app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
 window.show()
 app.exec_()
-"""
