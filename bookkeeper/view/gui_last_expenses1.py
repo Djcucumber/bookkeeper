@@ -1,7 +1,7 @@
 """
 Таблица расходов из лекции
 """
-
+"""
 import sys
 from PySide6 import QtWidgets
 
@@ -38,5 +38,4 @@ def set_data(data: list[list[str]]):
 
 expenses_table.show()
 sys.exit(app.exec())
-
-
+"""

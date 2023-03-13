@@ -13,7 +13,7 @@ def custom_class():
 
 @pytest.fixture
 def repo(custom_class):
-    return SQLiteRepository("database.db", custom_class)  # не видит файл базы данных:с
+    return SQLiteRepository("database.db", custom_class)  # не видит файл базы данных
 
 
 def test_crud(repo, custom_class):

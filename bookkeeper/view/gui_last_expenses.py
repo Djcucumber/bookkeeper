@@ -1,8 +1,9 @@
 """
-Демонстрация TableView на основе https://www.pythonguis.com/tutorials/qtableview-modelviews-numpy-pandas/
+Демонстрация TableView на основе https://www.pythonguis.com/\
+tutorials/qtableview-modelviews-numpy-pandas/
 Пример из семинара
 """
-
+"""
 from bookkeeper.models.category import Category
 from bookkeeper.repository.sqlite_repository import SQLiteRepository
 
@@ -55,3 +56,4 @@ app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
 window.show()
 app.exec_()
+"""
