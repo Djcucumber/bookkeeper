@@ -33,10 +33,6 @@ class SQLiteRepository(AbstractRepository[T]):
         names = ', '.join(self.fields.keys())
         p = ', '.join("?" * len(self.fields))
         values = [getattr(obj, x) for x in self.fields]
-        """
-        if getattr(obj, 'pk', None) != 0:
-        raise ValueError(f'trying to add object {obj} with filled `pk` attribute')
-        """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
             cur.execute('PRAGMA foreign_keys = ON')
@@ -51,7 +47,7 @@ class SQLiteRepository(AbstractRepository[T]):
         """ Получить объект по id """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute(f'SELECT * FROM {self.table_name} where pk = {pk}')
+            cur.execute(f'SELECT * FROM {self.table_name} WHERE pk = {pk}')
             con.close()
         return None
 
@@ -63,26 +59,19 @@ class SQLiteRepository(AbstractRepository[T]):
         """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            """
             if where is None:
-                #return list[self._container.values()]
-            """
-            cur.execute(f'SELECT * FROM {self.table_name}')   \
-                # добавить если условия не заданы, where ({names}: {p}) VALUES ({p})
+                cur.execute(f'SELECT * FROM {self.table_name}')
+            else:
+                cur.execute(f'SELECT * FROM {self.table_name} WHERE ({self.fields:p})')
             res = cur.fetchall()
         con.close()
         return res
 
     def update(self, obj: T) -> None:
         """ Обновить данные об объекте. Объект должен содержать поле pk. """
-        """
-        if obj.pk == 0:
-            raise ValueError('attempt to update object with unknown primary key')
-        self._container[obj.pk] = obj
-        """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute(f'SELECT * FROM {self.table_name} where pk = {obj.pk}')
+            cur.execute(f'SELECT * FROM {self.table_name} WHERE pk = {obj.pk}')
             con.close()
         return None
 
@@ -90,6 +79,6 @@ class SQLiteRepository(AbstractRepository[T]):
         """ Удалить запись """
         with sqlite3.connect(self.db_file) as con:
             cur = con.cursor()
-            cur.execute(f'DELETE * FROM {self.table_name} where pk = {pk}')
+            cur.execute(f'DELETE * FROM {self.table_name} WHERE pk = {pk}')
             con.close()
         return None
